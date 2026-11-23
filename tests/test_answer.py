@@ -1,4 +1,10 @@
-from finrag.answer import assemble_answer, build_prompt, extractive_answer, parse_model_json
+from finrag.answer import (
+    assemble_answer,
+    build_prompt,
+    extract_entity,
+    extractive_answer,
+    parse_model_json,
+)
 from finrag.evaluate import citation_support, evaluate_qa, mrr_at_k, recall_at_k
 
 
@@ -56,6 +62,40 @@ def test_extractive_answer_picks_relevant_sentence():
     ]
     answer = extractive_answer("安重工 2024 年营业收入是多少", chunks)
     assert "20.5" in answer
+
+
+def test_extract_entity():
+    assert extract_entity("星海量子 2024 年营业收入是多少？") == "星海量子"
+    assert extract_entity("今天天气怎么样") == ""
+
+
+def test_entity_gate_refuses_unknown_company():
+    ranked = [("c1", 0.9, {"bm25": 0.9, "vector": 0.8})]
+    texts = {"c1": "安重工 2024 年营业收入 20.5 亿元。"}
+    out = assemble_answer(
+        "星海量子 2024 年营业收入是多少",
+        ranked,
+        refuse_score=0.15,
+        require_entity=True,
+        chunk_texts=texts,
+    )
+    assert out["refused"] is True
+    assert out["citations"] == []
+
+
+def test_entity_gate_passes_known_company():
+    ranked = [("c1", 0.9, {"bm25": 0.9, "vector": 0.8})]
+    texts = {"c1": "安重工 2024 年营业收入 20.5 亿元。"}
+    out = assemble_answer(
+        "安重工 2024 年营业收入是多少",
+        ranked,
+        refuse_score=0.15,
+        require_entity=True,
+        chunk_texts=texts,
+        answer_text="20.5 亿元",
+    )
+    assert out["refused"] is False
+    assert out["citations"] == ["c1"]
 
 
 def test_recall_and_mrr():

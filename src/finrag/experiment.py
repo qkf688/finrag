@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import time
 
-from .evaluate import mrr_at_k, recall_at_k
+from .answer import assemble_answer, extractive_answer
+from .evaluate import citation_support, mrr_at_k, recall_at_k
 from .retrieve import BM25, VectorIndex, hybrid_search, lexical_overlap
 
 
@@ -105,6 +106,70 @@ def run_experiments(
             }
         )
     return results
+
+
+def evaluate_refusal(
+    answerable: list[dict],
+    unanswerable: list[dict],
+    search,
+    *,
+    refuse_score: float = 0.15,
+    chunk_texts: dict[str, str] | None = None,
+) -> dict:
+    """误拒率（可答问题被拒）与拒答率（不可答问题被拒）。
+
+    带 chunk_texts 时启用实体门禁：问句里的主体名必须出现在引用片段中，
+    否则即使分数够也拒答——金融问答里「同名指标不同公司」靠分数是挡不住的。
+    """
+
+    def refused(question: str) -> bool:
+        return assemble_answer(
+            question,
+            search(question),
+            refuse_score=refuse_score,
+            require_entity=chunk_texts is not None,
+            chunk_texts=chunk_texts,
+        )["refused"]
+
+    false_refusal = sum(1 for it in answerable if refused(it["question"])) / (len(answerable) or 1)
+    correct_refusal = sum(1 for it in unanswerable if refused(it["question"])) / (
+        len(unanswerable) or 1
+    )
+    return {
+        "answerable": len(answerable),
+        "unanswerable": len(unanswerable),
+        "false_refusal_rate": round(false_refusal, 4),
+        "unanswerable_refusal_rate": round(correct_refusal, 4),
+    }
+
+
+def evaluate_faithfulness(
+    answerable: list[dict],
+    search,
+    chunk_texts: dict[str, str],
+    *,
+    refuse_score: float = 0.15,
+) -> dict:
+    """抽取式回答的引用支撑度：答案里的词有多少能在引用片段中找到。"""
+    supports: list[float] = []
+    refused = 0
+    for item in answerable:
+        ranked = search(item["question"])
+        material = [(cid, chunk_texts[cid]) for cid, _, _ in ranked if cid in chunk_texts]
+        answer_text = extractive_answer(item["question"], material)
+        out = assemble_answer(
+            item["question"], ranked, refuse_score=refuse_score, answer_text=answer_text
+        )
+        if out["refused"]:
+            refused += 1
+            continue
+        cited = [chunk_texts[c] for c in out["citations"] if c in chunk_texts]
+        supports.append(citation_support(out["answer"], cited))
+    return {
+        "count": len(answerable),
+        "refused": refused,
+        "mean_citation_support": round(sum(supports) / (len(supports) or 1), 4),
+    }
 
 
 def render_markdown(results: list[dict], *, k: int = 5) -> str:

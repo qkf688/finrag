@@ -130,6 +130,74 @@ def cmd_experiment(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_report(args: argparse.Namespace) -> int:
+    from .experiment import (
+        evaluate_faithfulness,
+        evaluate_refusal,
+        render_markdown,
+        run_experiments,
+    )
+
+    settings = Settings.from_env()
+    chunks, ids, texts, bm25, vec, emb = build_index(settings, args.backend)
+    items = load_qa(settings.eval_file)
+    unanswerable = load_qa(settings.eval_file.parent / "qa_unanswerable.jsonl")
+    if not items or not unanswerable:
+        print("评测集不完整：需要 qa.jsonl 与 qa_unanswerable.jsonl")
+        return 1
+
+    chunk_texts = {c.chunk_id: c.text for c in chunks}
+
+    def search(question: str):
+        qv = emb.encode([question])[0]
+        return hybrid_search(
+            question,
+            texts,
+            ids,
+            bm25=bm25,
+            vec_scores=vec.search(qv, settings.top_k),
+            k=settings.top_k,
+        )
+
+    table = render_markdown(run_experiments(texts, ids, items, emb, k=args.top_k), k=args.top_k)
+    refusal = evaluate_refusal(
+        items, unanswerable, search, refuse_score=settings.refuse_score, chunk_texts=chunk_texts
+    )
+    faith = evaluate_faithfulness(
+        items, search, chunk_texts, refuse_score=settings.refuse_score
+    )
+
+    report = f"""# 评测报告
+
+生成命令：`python -m finrag.cli report`。语料：40 篇合成文档。
+可答问题 {refusal['answerable']} 条，不可答 {refusal['unanswerable']} 条。
+
+## 检索（k={args.top_k}）
+
+{table}
+
+## 拒答（阈值 {settings.refuse_score}）
+
+| 指标 | 值 |
+|---|---:|
+| 可答问题误拒率 | {refusal['false_refusal_rate']:.3f} |
+| 不可答问题拒答率 | {refusal['unanswerable_refusal_rate']:.3f} |
+
+## 抽取式回答的引用支撑度
+
+| 指标 | 值 |
+|---|---:|
+| 平均引用支撑度 | {faith['mean_citation_support']:.3f} |
+| 被拒答 | {faith['refused']} / {faith['count']} |
+"""
+    out = args.out
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(report, encoding="utf-8", newline="\n")
+    print(report)
+    print(f"已写入 {out}")
+    return 0
+
+
 def cmd_demo(args: argparse.Namespace) -> int:
     settings = Settings.from_env()
     chunks, ids, texts, bm25, vec, emb = build_index(settings, args.backend)
@@ -178,6 +246,12 @@ def main() -> int:
     p.add_argument("--top-k", type=int, default=5)
     p.add_argument("--out", type=Path, default=Path("results/experiments.md"))
     p.set_defaults(func=cmd_experiment)
+
+    p = sub.add_parser("report")
+    p.add_argument("--backend", choices=("hash", "local"), default="hash")
+    p.add_argument("--top-k", type=int, default=5)
+    p.add_argument("--out", type=Path, default=Path("results/report.md"))
+    p.set_defaults(func=cmd_report)
 
     p = sub.add_parser("demo")
     p.add_argument("question")

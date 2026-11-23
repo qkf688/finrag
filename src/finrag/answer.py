@@ -61,6 +61,27 @@ def extractive_answer(question: str, chunks: list[tuple[str, str]]) -> str:
     return best
 
 
+_ENTITY_RE = re.compile(r"^([一-鿿]{2,8}?)(?=\s*(?:19|20)\d{2})")
+
+
+def extract_entity(question: str) -> str:
+    """从问句开头抠出疑似公司/主体名（「星海量子 2024 年…」→「星海量子」）。
+
+    这是面向金融问答的粗粒度实体校验：不引 NER 模型，只用「句首 + 年份」这个
+    稳定句式。抽不出实体时返回空串，调用方应视为「不做实体门禁」。
+    """
+    m = _ENTITY_RE.match(question.strip())
+    return m.group(1) if m else ""
+
+
+def entity_supported(question: str, cited_texts: list[str]) -> bool:
+    """问句里的主体名是否至少出现在一个引用片段里。"""
+    ent = extract_entity(question)
+    if not ent:
+        return True
+    return any(ent in text for text in cited_texts)
+
+
 def assemble_answer(
     question: str,
     ranked: list[tuple[str, float, dict[str, float]]],
@@ -68,6 +89,8 @@ def assemble_answer(
     refuse_score: float = 0.05,
     answer_text: str = "",
     max_citations: int = 3,
+    require_entity: bool = False,
+    chunk_texts: dict[str, str] | None = None,
 ) -> dict:
     """把检索结果拼成最终回答。
 
@@ -86,6 +109,15 @@ def assemble_answer(
             "refused": True,
         }
     citations = [cid for cid, _ in kept[:max_citations]]
+    if require_entity and chunk_texts:
+        cited_texts = [chunk_texts[c] for c in citations if c in chunk_texts]
+        if not entity_supported(question, cited_texts):
+            return {
+                "question": question,
+                "answer": "知识库中没有相关信息",
+                "citations": [],
+                "refused": True,
+            }
     return {
         "question": question,
         "answer": answer_text or "",
