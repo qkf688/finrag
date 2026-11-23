@@ -18,7 +18,7 @@ class BM25:
         self.df: Counter[str] = Counter()
         self.avgdl: float = 0.0
 
-    def fit(self, docs: list[str]) -> "BM25":
+    def fit(self, docs: list[str]) -> BM25:
         self.docs = [tokenize(d) for d in docs]
         self.df = Counter()
         for toks in self.docs:
@@ -55,7 +55,7 @@ class VectorIndex:
         self.vectors: list[list[float]] = []
         self.ids: list[str] = []
 
-    def fit(self, ids: list[str], vectors: list[list[float]]) -> "VectorIndex":
+    def fit(self, ids: list[str], vectors: list[list[float]]) -> VectorIndex:
         self.ids = list(ids)
         self.vectors = list(vectors)
         return self
@@ -64,6 +64,15 @@ class VectorIndex:
         scored = [(i, cosine(query_vec, v)) for i, v in enumerate(self.vectors)]
         scored.sort(key=lambda x: x[1], reverse=True)
         return scored[:k]
+
+
+def lexical_overlap(query: str, text: str) -> float:
+    """查询词被文本覆盖的比例，用于重排（0–1）。"""
+    q = set(tokenize(query))
+    if not q:
+        return 0.0
+    t = set(tokenize(text))
+    return len(q & t) / len(q)
 
 
 def rrf_fuse(rankings: list[list[int]], k: int = 60) -> list[tuple[int, float]]:

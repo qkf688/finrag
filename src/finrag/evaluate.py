@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from .embed import tokenize
 
@@ -71,7 +71,11 @@ def evaluate_qa(
         )
     n = len(items) or 1
     latencies_sorted = sorted(latencies)
-    p95 = latencies_sorted[min(len(latencies_sorted) - 1, int(len(latencies_sorted) * 0.95))] if latencies_sorted else 0.0
+    if latencies_sorted:
+        idx = min(len(latencies_sorted) - 1, int(len(latencies_sorted) * 0.95))
+        p95 = latencies_sorted[idx]
+    else:
+        p95 = 0.0
     return {
         "count": len(items),
         "recall_at_k": sum(recalls) / n,

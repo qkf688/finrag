@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from .answer import SYSTEM_PROMPT, assemble_answer, build_prompt
+from .answer import SYSTEM_PROMPT, assemble_answer, build_prompt, extractive_answer
 from .config import Settings
 from .embed import HashEmbedding, LocalEmbedding
 from .evaluate import evaluate_qa
@@ -34,7 +34,10 @@ def build_index(settings: Settings, backend: str):
         raise SystemExit("语料为空：先在 corpus/ 放 .md 文档")
     texts = [c.text for c in chunks]
     ids = [c.chunk_id for c in chunks]
-    emb = LocalEmbedding(settings.embedding_model) if backend == "local" else HashEmbedding(settings.embedding_dim)
+    if backend == "local":
+        emb = LocalEmbedding(settings.embedding_model)
+    else:
+        emb = HashEmbedding(settings.embedding_dim)
     vectors = emb.encode(texts)
     vec = VectorIndex().fit(ids, vectors)
     bm25 = BM25().fit(texts)
@@ -108,6 +111,25 @@ def call_ollama(prompt: str, settings: Settings) -> str:
     return data.get("message", {}).get("content", "")
 
 
+def cmd_experiment(args: argparse.Namespace) -> int:
+    from .experiment import render_markdown, run_experiments
+
+    settings = Settings.from_env()
+    chunks, ids, texts, _bm25, _vec, emb = build_index(settings, args.backend)
+    items = load_qa(settings.eval_file)
+    if not items:
+        print(f"评测集为空：{settings.eval_file}")
+        return 1
+    results = run_experiments(texts, ids, items, emb, k=args.top_k)
+    table = render_markdown(results, k=args.top_k)
+    print(table)
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(table + "\n", encoding="utf-8", newline="\n")
+        print(f"已写入 {args.out}")
+    return 0
+
+
 def cmd_demo(args: argparse.Namespace) -> int:
     settings = Settings.from_env()
     chunks, ids, texts, bm25, vec, emb = build_index(settings, args.backend)
@@ -123,7 +145,10 @@ def cmd_demo(args: argparse.Namespace) -> int:
     by_id = {c.chunk_id: c for c in chunks}
     material = [(cid, by_id[cid].text) for cid, _, _ in ranked if cid in by_id]
     prompt = build_prompt(args.question, material)
-    answer_text = call_ollama(prompt, settings) if args.llm else ""
+    if args.llm:
+        answer_text = call_ollama(prompt, settings)
+    else:
+        answer_text = extractive_answer(args.question, material)
     out = assemble_answer(
         args.question,
         ranked,
@@ -147,6 +172,12 @@ def main() -> int:
     p.add_argument("--top-k", type=int, default=5)
     p.add_argument("--out", type=argparse.FileType("w", encoding="utf-8"), default=None)
     p.set_defaults(func=cmd_eval)
+
+    p = sub.add_parser("experiment")
+    p.add_argument("--backend", choices=("hash", "local"), default="hash")
+    p.add_argument("--top-k", type=int, default=5)
+    p.add_argument("--out", type=Path, default=Path("results/experiments.md"))
+    p.set_defaults(func=cmd_experiment)
 
     p = sub.add_parser("demo")
     p.add_argument("question")

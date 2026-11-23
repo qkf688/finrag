@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import re
 
+from .embed import tokenize
+
 SYSTEM_PROMPT = (
     "你是金融知识库问答助手。只依据【资料片段】回答问题；"
     "片段不足以回答时，answer 写「知识库中没有相关信息」，citations 给空数组。"
@@ -41,6 +43,22 @@ def parse_model_json(raw: str) -> dict:
     if not isinstance(data["citations"], list):
         data["citations"] = []
     return data
+
+
+def extractive_answer(question: str, chunks: list[tuple[str, str]]) -> str:
+    """无 LLM 的抽取式回答：从候选片段里选与问题词重叠最高的一句。
+
+    它的价值是让 demo 在没有 Ollama / API key 时也能给出可核对答案，
+    同时给「生成忠实度」提供一个人工可读的基线。
+    """
+    sentences: list[str] = []
+    for _, text in chunks:
+        sentences.extend(s.strip() for s in re.split(r"[。；\n]", text) if s.strip())
+    if not sentences:
+        return ""
+    q = set(tokenize(question))
+    best = max(sentences, key=lambda s: len(q & set(tokenize(s))))
+    return best
 
 
 def assemble_answer(

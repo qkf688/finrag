@@ -1,4 +1,4 @@
-from finrag.answer import assemble_answer, build_prompt, parse_model_json
+from finrag.answer import assemble_answer, build_prompt, extractive_answer, parse_model_json
 from finrag.evaluate import citation_support, evaluate_qa, mrr_at_k, recall_at_k
 
 
@@ -24,7 +24,10 @@ def test_refuse_when_all_scores_below_threshold():
 
 
 def test_citations_only_from_above_threshold():
-    ranked = [("c1", 0.9, {"bm25": 0.62, "vector": 0.56}), ("c2", 0.016, {"bm25": 0.0, "vector": 0.08})]
+    ranked = [
+        ("c1", 0.9, {"bm25": 0.62, "vector": 0.56}),
+        ("c2", 0.016, {"bm25": 0.0, "vector": 0.08}),
+    ]
     out = assemble_answer("问题", ranked, refuse_score=0.15, answer_text="答案正文")
     assert out["refused"] is False
     assert out["citations"] == ["c1"]
@@ -44,6 +47,15 @@ def test_prompt_contains_chunk_ids_and_question():
     assert "[c1]" in prompt
     assert "片段内容" in prompt
     assert "问题" in prompt
+
+
+def test_extractive_answer_picks_relevant_sentence():
+    chunks = [
+        ("c1", "安重工是一家主营电子业务的公司。安重工 2024 年营业收入 20.5 亿元，同比增长 12%。"),
+        ("c2", "瑞材料 2024 年研发投入占比 5.2%。"),
+    ]
+    answer = extractive_answer("安重工 2024 年营业收入是多少", chunks)
+    assert "20.5" in answer
 
 
 def test_recall_and_mrr():

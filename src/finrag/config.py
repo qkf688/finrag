@@ -24,7 +24,7 @@ class Settings:
     llm_base_url: str = "http://localhost:11434"
 
     @staticmethod
-    def from_env() -> "Settings":
+    def from_env() -> Settings:
         base = Settings()
         return Settings(
             corpus_dir=Path(os.environ.get("FINRAG_CORPUS_DIR", base.corpus_dir)),
