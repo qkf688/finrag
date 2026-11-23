@@ -16,7 +16,7 @@ def _rank_bm25(question: str, texts: list[str], ids: list[str], bm25: BM25, k: i
 
 
 def _rank_vector(question: str, vec: VectorIndex, ids: list[str], emb, k: int) -> list[str]:
-    qv = emb.encode([question])[0]
+    qv = emb.encode_queries([question])[0]
     return [ids[i] for i, _ in vec.search(qv, k)]
 
 
@@ -30,7 +30,7 @@ def _rank_hybrid(
     k: int,
     top_n: int,
 ):
-    qv = emb.encode([question])[0]
+    qv = emb.encode_queries([question])[0]
     return hybrid_search(
         question,
         texts,

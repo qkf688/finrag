@@ -63,7 +63,7 @@ def cmd_eval(args: argparse.Namespace) -> int:
         return 1
 
     def retrieve(question: str) -> list[str]:
-        qv = emb.encode([question])[0]
+        qv = emb.encode_queries([question])[0]
         ranked = hybrid_search(
             question,
             texts,
@@ -147,9 +147,11 @@ def cmd_report(args: argparse.Namespace) -> int:
         return 1
 
     chunk_texts = {c.chunk_id: c.text for c in chunks}
+    doc_ids = {c.doc_id for c in chunks}
+    real_docs = {d for d in doc_ids if d.startswith("em-")}
 
     def search(question: str):
-        qv = emb.encode([question])[0]
+        qv = emb.encode_queries([question])[0]
         return hybrid_search(
             question,
             texts,
@@ -169,7 +171,8 @@ def cmd_report(args: argparse.Namespace) -> int:
 
     report = f"""# 评测报告
 
-生成命令：`python -m finrag.cli report`。语料：40 篇合成文档。
+生成命令：`python -m finrag.cli report`。
+语料：{len(doc_ids)} 篇文档（其中 {len(real_docs)} 篇为真实新闻，其余为合成/样例干扰项）。
 可答问题 {refusal['answerable']} 条，不可答 {refusal['unanswerable']} 条。
 
 ## 检索（k={args.top_k}）
@@ -201,7 +204,7 @@ def cmd_report(args: argparse.Namespace) -> int:
 def cmd_demo(args: argparse.Namespace) -> int:
     settings = Settings.from_env()
     chunks, ids, texts, bm25, vec, emb = build_index(settings, args.backend)
-    qv = emb.encode([args.question])[0]
+    qv = emb.encode_queries([args.question])[0]
     ranked = hybrid_search(
         args.question,
         texts,

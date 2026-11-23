@@ -13,6 +13,9 @@ from typing import Protocol
 
 _WORD_RE = re.compile(r"[a-z0-9]+|[一-鿿]+")
 
+# BGE 中文检索模型要求 query 侧加指令前缀；document 侧不加。
+_QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
+
 
 def tokenize(text: str) -> list[str]:
     """英文按词切；中文按「单字 + 相邻字二元组」切。"""
@@ -32,6 +35,8 @@ class EmbeddingBackend(Protocol):
 
     def encode(self, texts: list[str]) -> list[list[float]]: ...
 
+    def encode_queries(self, texts: list[str]) -> list[list[float]]: ...
+
 
 class HashEmbedding:
     """哈希基线：token → 维度桶 → L2 归一化。同一输入永远同一向量。"""
@@ -49,6 +54,9 @@ class HashEmbedding:
             norm = math.sqrt(sum(x * x for x in vec)) or 1.0
             vectors.append([x / norm for x in vec])
         return vectors
+
+    def encode_queries(self, texts: list[str]) -> list[list[float]]:
+        return self.encode(texts)
 
 
 class LocalEmbedding:
@@ -69,13 +77,22 @@ class LocalEmbedding:
                     "或用 HashEmbedding 作为离线基线。"
                 ) from exc
             self._model = SentenceTransformer(self.model_name)
-            self.dim = int(self._model.get_sentence_embedding_dimension())
+            # sentence-transformers 6.x 把方法改名为 get_embedding_dimension；
+            # 两个名字都判一下，兼容 3.x–6.x。
+            dim_fn = getattr(
+                self._model, "get_embedding_dimension", None
+            ) or self._model.get_sentence_embedding_dimension
+            self.dim = int(dim_fn())
         return self._model
 
     def encode(self, texts: list[str]) -> list[list[float]]:
         model = self._load()
         vectors = model.encode(texts, normalize_embeddings=True)
         return [list(map(float, v)) for v in vectors]
+
+    def encode_queries(self, texts: list[str]) -> list[list[float]]:
+        """BGE 检索：query 加指令前缀，document 不加。"""
+        return self.encode([_QUERY_PREFIX + t for t in texts])
 
 
 def cosine(a: list[float], b: list[float]) -> float:
