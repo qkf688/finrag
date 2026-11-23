@@ -1,0 +1,6 @@
+{"question": "基金的业绩比较基准是什么？", "relevant_chunk_ids": ["sample-fund-001#基金概况#0"]}
+{"question": "报告期末基金份额总额是多少？", "relevant_chunk_ids": ["sample-fund-001#规模与份额#0"]}
+{"question": "前十大重仓股占净值比例是多少？", "relevant_chunk_ids": ["sample-fund-001#持仓结构#0"]}
+{"question": "这家公司半年度营业收入和净利润分别是多少？", "relevant_chunk_ids": ["sample-filing-002#经营情况#0"]}
+{"question": "研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["sample-filing-002#研发投入#0"]}
+{"question": "报告里提到的主要风险因素有哪些？", "relevant_chunk_ids": ["sample-filing-002#风险提示#0"]}

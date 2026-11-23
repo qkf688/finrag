@@ -1,0 +1,25 @@
+[project]
+name = "finrag"
+version = "0.1.0"
+description = "金融知识库 RAG 检索层与评测"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+model = ["sentence-transformers>=3.0", "numpy>=1.26"]
+serve = ["fastapi>=0.115", "uvicorn>=0.30"]
+
+[project.scripts]
+finrag = "finrag.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
