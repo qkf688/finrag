@@ -1,80 +1,120 @@
-{"question": "安重工 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-001#经营情况#0"]}
-{"question": "安重工 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-001#研发投入#0"]}
-{"question": "华电子集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-002#经营情况#0"]}
-{"question": "华电子集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-002#研发投入#0"]}
-{"question": "瑞能源集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-003#经营情况#0"]}
-{"question": "瑞能源集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-003#研发投入#0"]}
-{"question": "中重工控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-004#经营情况#0"]}
-{"question": "中重工控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-004#研发投入#0"]}
-{"question": "东重工控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-005#经营情况#0"]}
-{"question": "东重工控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-005#研发投入#0"]}
-{"question": "恒电子控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-006#经营情况#0"]}
-{"question": "恒电子控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-006#研发投入#0"]}
-{"question": "联股份 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-007#经营情况#0"]}
-{"question": "联股份 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-007#研发投入#0"]}
-{"question": "瑞医药集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-008#经营情况#0"]}
-{"question": "瑞医药集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-008#研发投入#0"]}
-{"question": "远医药 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-009#经营情况#0"]}
-{"question": "远医药 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-009#研发投入#0"]}
-{"question": "远电子 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-010#经营情况#0"]}
-{"question": "远电子 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-010#研发投入#0"]}
-{"question": "恒能源控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-011#经营情况#0"]}
-{"question": "恒能源控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-011#研发投入#0"]}
-{"question": "瑞电子 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-012#经营情况#0"]}
-{"question": "瑞电子 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-012#研发投入#0"]}
-{"question": "新材料 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-013#经营情况#0"]}
-{"question": "新材料 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-013#研发投入#0"]}
-{"question": "瑞智造 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-014#经营情况#0"]}
-{"question": "瑞智造 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-014#研发投入#0"]}
-{"question": "华能源控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-015#经营情况#0"]}
-{"question": "华能源控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-015#研发投入#0"]}
-{"question": "新能源控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-016#经营情况#0"]}
-{"question": "新能源控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-016#研发投入#0"]}
-{"question": "远智造 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-017#经营情况#0"]}
-{"question": "远智造 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-017#研发投入#0"]}
-{"question": "中材料集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-018#经营情况#0"]}
-{"question": "中材料集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-018#研发投入#0"]}
-{"question": "远股份控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-019#经营情况#0"]}
-{"question": "远股份控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-019#研发投入#0"]}
-{"question": "新科技 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-020#经营情况#0"]}
-{"question": "新科技 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-020#研发投入#0"]}
-{"question": "联智造集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-021#经营情况#0"]}
-{"question": "联智造集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-021#研发投入#0"]}
-{"question": "瑞科技 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-022#经营情况#0"]}
-{"question": "瑞科技 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-022#研发投入#0"]}
-{"question": "东医药控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-023#经营情况#0"]}
-{"question": "东医药控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-023#研发投入#0"]}
-{"question": "中医药控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-024#经营情况#0"]}
-{"question": "中医药控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-024#研发投入#0"]}
-{"question": "金科技 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-025#经营情况#0"]}
-{"question": "金科技 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-025#研发投入#0"]}
-{"question": "联材料 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-026#经营情况#0"]}
-{"question": "联材料 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-026#研发投入#0"]}
-{"question": "远能源集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-027#经营情况#0"]}
-{"question": "远能源集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-027#研发投入#0"]}
-{"question": "恒重工控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-028#经营情况#0"]}
-{"question": "恒重工控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-028#研发投入#0"]}
-{"question": "恒股份集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-029#经营情况#0"]}
-{"question": "恒股份集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-029#研发投入#0"]}
-{"question": "新股份集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-030#经营情况#0"]}
-{"question": "新股份集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-030#研发投入#0"]}
-{"question": "中电子控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-031#经营情况#0"]}
-{"question": "中电子控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-031#研发投入#0"]}
-{"question": "联智造控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-032#经营情况#0"]}
-{"question": "联智造控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-032#研发投入#0"]}
-{"question": "远医药控股 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-033#经营情况#0"]}
-{"question": "远医药控股 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-033#研发投入#0"]}
-{"question": "新科技集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-034#经营情况#0"]}
-{"question": "新科技集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-034#研发投入#0"]}
-{"question": "瑞材料 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-035#经营情况#0"]}
-{"question": "瑞材料 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-035#研发投入#0"]}
-{"question": "恒能源集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-036#经营情况#0"]}
-{"question": "恒能源集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-036#研发投入#0"]}
-{"question": "华材料 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-037#经营情况#0"]}
-{"question": "华材料 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-037#研发投入#0"]}
-{"question": "安股份集团 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-038#经营情况#0"]}
-{"question": "安股份集团 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-038#研发投入#0"]}
-{"question": "安股份 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-039#经营情况#0"]}
-{"question": "安股份 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-039#研发投入#0"]}
-{"question": "恒材料 2024 年营业收入是多少？", "relevant_chunk_ids": ["syn-040#经营情况#0"]}
-{"question": "恒材料 2024 年研发投入占营业收入比重是多少？", "relevant_chunk_ids": ["syn-040#研发投入#0"]}
+{"question": "公告显示，四季度以来，章建平妻子方文艳大手笔加仓，截至相关数字是多少？", "relevant_chunk_ids": ["em-001#root#0"]}
+{"question": "持仓13.35亿元！章建平家族大举加仓科相关数字是多少？", "relevant_chunk_ids": ["em-001#root#0"]}
+{"question": "的股价表现看，进入四季度以来，截至相关数字是多少？", "relevant_chunk_ids": ["em-001#root#1"]}
+{"question": "从资本开支源头看，算力硬件公司订单、营收、利润相关数字是多少？", "relevant_chunk_ids": ["em-001#root#2"]}
+{"question": "股价逼近一年低点！华友钴业又推最高15亿相关数字是多少？", "relevant_chunk_ids": ["em-002#root#0"]}
+{"question": "在发布回购结果公告相关数字是多少？", "relevant_chunk_ids": ["em-002#root#1"]}
+{"question": "若回购完成相关数字是多少？", "relevant_chunk_ids": ["em-002#root#1"]}
+{"question": "但同期归母净利润为相关数字是多少？", "relevant_chunk_ids": ["em-002#root#2"]}
+{"question": "第三季度华友钴业实现营业收入相关数字是多少？", "relevant_chunk_ids": ["em-002#root#2"]}
+{"question": "借钱砸15亿元布局上游！思特威拟入股晶圆相关数字是多少？", "relevant_chunk_ids": ["em-003#root#0"]}
+{"question": "交易完成后，思特威将持有武汉楚兴相关数字是多少？", "relevant_chunk_ids": ["em-003#root#0"]}
+{"question": "财务数据显示，武汉楚兴相关数字是多少？", "relevant_chunk_ids": ["em-003#root#1"]}
+{"question": "财报显示相关数字是多少？", "relevant_chunk_ids": ["em-003#root#2"]}
+{"question": "北京时间相关数字是多少？", "relevant_chunk_ids": ["em-004#root#0"]}
+{"question": "美股三大股指期货全线拉升！特朗普最新发声相关数字是多少？", "relevant_chunk_ids": ["em-004#root#0"]}
+{"question": "投资管理首席投资策略师迈克尔·阿罗内表示，他正在关注标普相关数字是多少？", "relevant_chunk_ids": ["em-004#root#1"]}
+{"question": "美国总统特朗普将美股市值蒸发相关数字是多少？", "relevant_chunk_ids": ["em-005#root#0"]}
+{"question": "“自民主党相关数字是多少？", "relevant_chunk_ids": ["em-005#root#0"]}
+{"question": "高盛：明年全球GDP料增2.8% 美联储相关数字是多少？", "relevant_chunk_ids": ["em-006#root#0"]}
+{"question": "预判，伴随美国关税、能源以及AI相关通胀压力逐步消退相关数字是多少？", "relevant_chunk_ids": ["em-006#root#0"]}
+{"question": "A股迎稳市组合拳 有望带来4000亿增量相关数字是多少？", "relevant_chunk_ids": ["em-007#root#0"]}
+{"question": "根据沪深北交易所发布的通知，将融资保证金比例下限从相关数字是多少？", "relevant_chunk_ids": ["em-007#root#0"]}
+{"question": "此次融资保证金比例降低至相关数字是多少？", "relevant_chunk_ids": ["em-007#root#1"]}
+{"question": "回顾历史，A股融资保证金比例历经三次调整相关数字是多少？", "relevant_chunk_ids": ["em-007#root#2"]}
+{"question": "目前，已有相关数字是多少？", "relevant_chunk_ids": ["em-007#root#5"]}
+{"question": "海外流动性方面，美联储相关数字是多少？", "relevant_chunk_ids": ["em-008#root#2"]}
+{"question": "各类悲观预期集中在相关数字是多少？", "relevant_chunk_ids": ["em-008#root#3"]}
+{"question": "十大券商策略：不必过度悲观！市场或逐渐企相关数字是多少？", "relevant_chunk_ids": ["em-008#root#4"]}
+{"question": "参考历史（如相关数字是多少？", "relevant_chunk_ids": ["em-008#root#6"]}
+{"question": "其一，场外大资金自相关数字是多少？", "relevant_chunk_ids": ["em-008#root#6"]}
+{"question": "澎湃新闻搜集了相关数字是多少？", "relevant_chunk_ids": ["em-009#root#0"]}
+{"question": "十大券商看后市｜A股底部特征逐步显现 极相关数字是多少？", "relevant_chunk_ids": ["em-009#root#2"]}
+{"question": "本轮形似相关数字是多少？", "relevant_chunk_ids": ["em-009#root#2"]}
+{"question": "紧急会议！救市资金随时启用！韩国最新出手相关数字是多少？", "relevant_chunk_ids": ["em-010#root#0"]}
+{"question": "值得注意的是，这是相关数字是多少？", "relevant_chunk_ids": ["em-010#root#0"]}
+{"question": "股价指数（KOSPI）已自相关数字是多少？", "relevant_chunk_ids": ["em-010#root#2"]}
+{"question": "协会数据显示，截至今年相关数字是多少？", "relevant_chunk_ids": ["em-011#root#0"]}
+{"question": "订单量同比增长相关数字是多少？", "relevant_chunk_ids": ["em-011#root#0"]}
+{"question": "三季度营收、归母净利润同比平均增长相关数字是多少？", "relevant_chunk_ids": ["em-011#root#1"]}
+{"question": "概念板块显示，目前A股市场有相关数字是多少？", "relevant_chunk_ids": ["em-011#root#1"]}
+{"question": "前三季度归母净利润相关数字是多少？", "relevant_chunk_ids": ["em-011#root#2"]}
+{"question": "归母净利润相关数字是多少？", "relevant_chunk_ids": ["em-011#root#2"]}
+{"question": "AI制药提速！研发周期最多缩短一半 多股相关数字是多少？", "relevant_chunk_ids": ["em-012#root#0"]}
+{"question": "机构预测相关数字是多少？", "relevant_chunk_ids": ["em-012#root#0"]}
+{"question": "一款新药从研发到上市可能需要相关数字是多少？", "relevant_chunk_ids": ["em-012#root#1"]}
+{"question": "涉及AI制药概念，合计总市值约相关数字是多少？", "relevant_chunk_ids": ["em-012#root#2"]}
+{"question": "前三季度，公司营收相关数字是多少？", "relevant_chunk_ids": ["em-012#root#3"]}
+{"question": "公司累计上市产品相关数字是多少？", "relevant_chunk_ids": ["em-012#root#3"]}
+{"question": "业务功能发挥，上海交易所、深圳交易所、北京证券交易所于相关数字是多少？", "relevant_chunk_ids": ["em-014#root#0"]}
+{"question": "美股科技股盘前全线拉升！黄仁勋突传大消息相关数字是多少？", "relevant_chunk_ids": ["em-015#root#0"]}
+{"question": "同样大幅反弹，上周五该股收跌超相关数字是多少？", "relevant_chunk_ids": ["em-015#root#0"]}
+{"question": "据参考消息援引英国《金融时报》网站相关数字是多少？", "relevant_chunk_ids": ["em-015#root#1"]}
+{"question": "两个月来股票型ETF净流入超7500亿 相关数字是多少？", "relevant_chunk_ids": ["em-016#root#0"]}
+{"question": "截至当日收盘，创业板ETF易方达成交相关数字是多少？", "relevant_chunk_ids": ["em-016#root#0"]}
+{"question": "研报认为，当前市场估值偏低相关数字是多少？", "relevant_chunk_ids": ["em-016#root#3"]}
+{"question": "A股上市公司掀起回购高潮，逾相关数字是多少？", "relevant_chunk_ids": ["em-017#root#0"]}
+{"question": "等多家公司披露回购方案或回购提议，其中摩尔线程拟最高相关数字是多少？", "relevant_chunk_ids": ["em-017#root#0"]}
+{"question": "本次拟回购金额不低于相关数字是多少？", "relevant_chunk_ids": ["em-017#root#1"]}
+{"question": "A股回购潮来了 逾30家公司集体发布回购相关数字是多少？", "relevant_chunk_ids": ["em-017#root#1"]}
+{"question": "公告称，公司拟以集中竞价交易方式回购股份，回购金额不低于相关数字是多少？", "relevant_chunk_ids": ["em-017#root#2"]}
+{"question": "回购价格不超过董事会通过回购决议前相关数字是多少？", "relevant_chunk_ids": ["em-017#root#3"]}
+{"question": "提议人在提议前相关数字是多少？", "relevant_chunk_ids": ["em-017#root#4"]}
+{"question": "按回购金额上限测算，预计回购股份约相关数字是多少？", "relevant_chunk_ids": ["em-017#root#6"]}
+{"question": "公告称，公司董事会审议通过回购股份方案，拟使用不低于相关数字是多少？", "relevant_chunk_ids": ["em-017#root#7"]}
+{"question": "回购价格不超过相关数字是多少？", "relevant_chunk_ids": ["em-017#root#7"]}
+{"question": "公告称，公司于相关数字是多少？", "relevant_chunk_ids": ["em-017#root#9"]}
+{"question": "嘉兴桐乡支行出具的贷款承诺函，贷款金额不超相关数字是多少？", "relevant_chunk_ids": ["em-017#root#9"]}
+{"question": "首次回购支付相关数字是多少？", "relevant_chunk_ids": ["em-017#root#10"]}
+{"question": "为历史第三高，仅次于相关数字是多少？", "relevant_chunk_ids": ["em-018#root#0"]}
+{"question": "年内之最、历史第三 920亿元净申购TO相关数字是多少？", "relevant_chunk_ids": ["em-018#root#0"]}
+{"question": "研报，场外大资金大量申购主流ETF，这与相关数字是多少？", "relevant_chunk_ids": ["em-018#root#1"]}
+{"question": "报告预计，主要经济体仅会在相关数字是多少？", "relevant_chunk_ids": ["em-019#root#0"]}
+{"question": "突传重磅！美联储加息大消息！美国财长发出相关数字是多少？", "relevant_chunk_ids": ["em-019#root#0"]}
+{"question": "美联储在相关数字是多少？", "relevant_chunk_ids": ["em-019#root#1"]}
+{"question": "但能源价格高企持续推升通胀压力，部分官员表态支持相关数字是多少？", "relevant_chunk_ids": ["em-019#root#1"]}
+{"question": "数据公司XDOF最新实测显示，GPT-相关数字是多少？", "relevant_chunk_ids": ["em-020#root#0"]}
+{"question": "较两个月前GPT-相关数字是多少？", "relevant_chunk_ids": ["em-020#root#0"]}
+{"question": "表示，GPT-相关数字是多少？", "relevant_chunk_ids": ["em-020#root#1"]}
+{"question": "控制延伸，Google Gemini Robotics相关数字是多少？", "relevant_chunk_ids": ["em-020#root#1"]}
+{"question": "二级市场方面，盛剑科技股价近期收获相关数字是多少？", "relevant_chunk_ids": ["em-021#root#0"]}
+{"question": "晚间，盛剑科技公告称，近期公司股票价格涨幅较大，自相关数字是多少？", "relevant_chunk_ids": ["em-021#root#0"]}
+{"question": "化学品材料业务实现收入相关数字是多少？", "relevant_chunk_ids": ["em-021#root#1"]}
+{"question": "知名私募基金经理吴悦风回应清盘传闻：是假相关数字是多少？", "relevant_chunk_ids": ["em-022#root#0"]}
+{"question": "尤其是在相关数字是多少？", "relevant_chunk_ids": ["em-022#root#0"]}
+{"question": "根据相关消息，荷兰海牙地方法院于相关数字是多少？", "relevant_chunk_ids": ["em-024#root#0"]}
+{"question": "这是法院首次就Ti相关数字是多少？", "relevant_chunk_ids": ["em-024#root#0"]}
+{"question": "禁令覆盖相关数字是多少？", "relevant_chunk_ids": ["em-024#root#1"]}
+{"question": "荷兰地方法院裁定Ti7在欧盟禁售禁产 比相关数字是多少？", "relevant_chunk_ids": ["em-024#root#1"]}
+{"question": "这轮稳市框架正逐渐成型 看六大变化 _ 相关数字是多少？", "relevant_chunk_ids": ["em-025#root#0"]}
+{"question": "在首届中国资本市场学术年会上，吴清指出，A股市场有相关数字是多少？", "relevant_chunk_ids": ["em-025#root#1"]}
+{"question": "前三季度沪深两市上市公司营业收入相关数字是多少？", "relevant_chunk_ids": ["em-025#root#3"]}
+{"question": "年金基金、保险资金合计净买入A股超过相关数字是多少？", "relevant_chunk_ids": ["em-025#root#3"]}
+{"question": "以融资保证金比例为例，今年相关数字是多少？", "relevant_chunk_ids": ["em-025#root#4"]}
+{"question": "再如两项结构性货币政策工具相关数字是多少？", "relevant_chunk_ids": ["em-025#root#4"]}
+{"question": "多个部门、多种工具在同一个方向上叠加，形成“相关数字是多少？", "relevant_chunk_ids": ["em-025#root#5"]}
+{"question": "具体来看，央行提供流动性工具：互换便利、回购增持再贷款相关数字是多少？", "relevant_chunk_ids": ["em-025#root#5"]}
+{"question": "沪深两市多家上市公司相关数字是多少？", "relevant_chunk_ids": ["em-026#root#0"]}
+{"question": "前三季度利润分配预案：拟相关数字是多少？", "relevant_chunk_ids": ["em-026#root#0"]}
+{"question": "11月23日晚间沪深上市公司重大事项公告相关数字是多少？", "relevant_chunk_ids": ["em-026#root#1"]}
+{"question": "的股份比例达到相关数字是多少？", "relevant_chunk_ids": ["em-026#root#3"]}
+{"question": "董事长提议相关数字是多少？", "relevant_chunk_ids": ["em-026#root#3"]}
+{"question": "杜振新计划自本公告披露之日起相关数字是多少？", "relevant_chunk_ids": ["em-026#root#4"]}
+{"question": "控股股东的一致行动人拟相关数字是多少？", "relevant_chunk_ids": ["em-026#root#6"]}
+{"question": "全资子公司中标相关数字是多少？", "relevant_chunk_ids": ["em-026#root#11"]}
+{"question": "大奇迹日 暴涨原因找到了！机器人概念股集相关数字是多少？", "relevant_chunk_ids": ["em-027#root#0"]}
+{"question": "截至收盘，沪指涨相关数字是多少？", "relevant_chunk_ids": ["em-027#root#0"]}
+{"question": "由于日本休市，现券交易在伦敦时段启动，美国基准相关数字是多少？", "relevant_chunk_ids": ["em-027#root#1"]}
+{"question": "宇树跻身A股第三贵！人形机器人掀涨停潮 相关数字是多少？", "relevant_chunk_ids": ["em-028#root#0"]}
+{"question": "板块龙头宇树科技大涨超相关数字是多少？", "relevant_chunk_ids": ["em-028#root#0"]}
+{"question": "冲高回落，尤其上周，板块持续回调，多达相关数字是多少？", "relevant_chunk_ids": ["em-028#root#1"]}
+{"question": "ETF-Direxion涨近相关数字是多少？", "relevant_chunk_ids": ["em-029#root#0"]}
+{"question": "英伟达直线拉升！特朗普重磅表态：希望英伟相关数字是多少？", "relevant_chunk_ids": ["em-029#root#1"]}
+{"question": "政策暖风频吹！医疗服务板块拐点渐近 多股相关数字是多少？", "relevant_chunk_ids": ["em-030#root#0"]}
+{"question": "同步发布的商业健康保险创新药品目录新增相关数字是多少？", "relevant_chunk_ids": ["em-030#root#1"]}
+{"question": "机构：行业底部特征显现相关数字是多少？", "relevant_chunk_ids": ["em-030#root#1"]}
+{"question": "及门诊部合计达相关数字是多少？", "relevant_chunk_ids": ["em-030#root#3"]}
+{"question": "三季度公司收入同比增长相关数字是多少？", "relevant_chunk_ids": ["em-030#root#3"]}
+{"question": "首批主动ETF上市首秀 聚焦六大表现 _相关数字是多少？", "relevant_chunk_ids": ["em-031#root#0"]}
+{"question": "三是上市首日相关数字是多少？", "relevant_chunk_ids": ["em-031#root#0"]}
+{"question": "关注点三：首日成交相关数字是多少？", "relevant_chunk_ids": ["em-031#root#1"]}

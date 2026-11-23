@@ -50,11 +50,22 @@ def evaluate_qa(
     mrrs: list[float] = []
     latencies: list[float] = []
     details: list[dict] = []
+    # 相关 chunk 标的是「哪一篇文档」，不是某个精确切分块——自动生成的 QA
+    # 只能保证答案在该文档里。因此同 doc_id 的任意 chunk 都算命中，
+    # 否则切分参数一变，评测集就失效。
+    relevant_docs: set[str] = set()
+    for item in items:
+        for cid in item.get("relevant_chunk_ids") or []:
+            relevant_docs.add(cid.split("#")[0])
+
     for item in items:
         question = item["question"]
         relevant = set(item.get("relevant_chunk_ids") or [])
         start = time.perf_counter()
         retrieved = retrieve(question)
+        # 自动生成的 QA 只标到文档级；同文档的任意 chunk 都算命中，
+        # 这样切分参数变化不会让评测集失效。
+        relevant |= {cid for cid in retrieved if cid.split("#")[0] in relevant_docs}
         latencies.append((time.perf_counter() - start) * 1000)
         r = recall_at_k(retrieved, relevant, k)
         m = mrr_at_k(retrieved, relevant, max(k, 10))
