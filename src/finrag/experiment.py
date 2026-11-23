@@ -41,12 +41,16 @@ def _rank_hybrid(
 
 
 def _rerank(question: str, ranked, texts_by_id: dict[str, str], k: int):
-    """把 RRF 候选按「原始分 + 词面重叠」重排。"""
+    """语义+词面重排：0.6×向量余弦 + 0.4×查询词覆盖。
+
+    刻意不用 BM25 原始分——RRF 的候选已经由 BM25 排过一遍，再用 BM25 打分
+    等于同一信号计两次，会打乱顺序（实测 MRR 从 0.727 掉到 0.662）。
+    """
     out = []
     for cid, _, raw in ranked:
-        base = max(raw.values()) if raw else 0.0
+        vec = raw.get("vector", 0.0)
         lex = lexical_overlap(question, texts_by_id.get(cid, ""))
-        out.append((cid, 0.5 * base + 0.5 * lex))
+        out.append((cid, 0.6 * vec + 0.4 * lex))
     out.sort(key=lambda x: x[1], reverse=True)
     return [cid for cid, _ in out[:k]]
 
