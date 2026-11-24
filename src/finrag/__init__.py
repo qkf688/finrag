@@ -10,4 +10,4 @@
     corpus_check 语料元数据体检
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"

@@ -141,7 +141,7 @@ make demo          # 单问检索 + 组装答案（--llm 可调本地 Ollama）
 - [x] 出完整四组对照评测表与 README 结论
 - [ ] 人工标注 40–60 条，替代自动生成 QA
 - [ ] 加 cross-encoder 重排
-- [ ] 打 tag v1.0.0
+- [x] 打 tag v1.0.0
 
 ## 开发方式
 
