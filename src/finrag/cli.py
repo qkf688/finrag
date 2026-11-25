@@ -11,37 +11,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
 
 from .answer import SYSTEM_PROMPT, assemble_answer, build_prompt, extractive_answer
 from .config import Settings
-from .embed import HashEmbedding, LocalEmbedding
 from .evaluate import evaluate_qa
+from .index import IndexBuildError, build_index
 from .qa import load_qa
-from .retrieve import BM25, VectorIndex, hybrid_search
-from .split import load_corpus
-
-
-def build_index(settings: Settings, backend: str):
-    chunks = load_corpus(
-        settings.corpus_dir,
-        max_chars=settings.chunk_chars,
-        overlap=settings.chunk_overlap,
-    )
-    if not chunks:
-        raise SystemExit("语料为空：先在 corpus/ 放 .md 文档")
-    texts = [c.text for c in chunks]
-    ids = [c.chunk_id for c in chunks]
-    if backend == "local":
-        emb = LocalEmbedding(settings.embedding_model)
-    else:
-        emb = HashEmbedding(settings.embedding_dim)
-    vectors = emb.encode(texts)
-    vec = VectorIndex().fit(ids, vectors)
-    bm25 = BM25().fit(texts)
-    return chunks, ids, texts, bm25, vec, emb
+from .retrieve import hybrid_search
 
 
 def cmd_check_corpus(args: argparse.Namespace) -> int:
@@ -263,7 +243,11 @@ def main() -> int:
     p.set_defaults(func=cmd_demo)
 
     args = parser.parse_args()
-    return args.func(args)
+    try:
+        return args.func(args)
+    except IndexBuildError as exc:
+        print(f"[ERROR] {exc}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

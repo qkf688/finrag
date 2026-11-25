@@ -7,6 +7,12 @@ setup:
 model:
 	$(PY) -m pip install -e ".[model]"
 
+serve-setup:
+	$(PY) -m pip install -e ".[serve]"
+
+serve:
+	$(PY) -m uvicorn finrag.serve:app --port 8000
+
 test:
 	$(PY) -m pytest
 

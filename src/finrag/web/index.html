@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinRAG · 金融知识库检索演示</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f5f4f'/%3E%3Cpath d='M10 9h12v3h-9v4h7v3h-7v6h-3z' fill='%23fbfaf7'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #f7f6f2;
+    --surface: #fdfcf9;
+    --ink: #191917;
+    --muted: #67655e;
+    --line: rgba(25, 25, 23, .14);
+    --accent: #1f5f4f;
+    --accent-hover: #17493d;
+    --accent-weak: #e9f0ec;
+    --on-accent: #fbfaf7;
+
+    --font: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif;
+
+    --text-xs: 12px;
+    --text-sm: 16px;
+    --text-md: 20px;
+    --text-lg: 25px;
+    --text-xl: 31px;
+    --text-2xl: 39px;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+
+    --radius-panel: 14px;
+    --radius-control: 8px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 var(--space-5) var(--space-8);
+  }
+
+  /* 页眉 */
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-6) 0 var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .wordmark {
+    font-size: var(--text-md);
+    font-weight: 700;
+    letter-spacing: -.01em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .wordmark:hover { color: var(--ink); }
+  .top-link { font-size: var(--text-xs); color: var(--muted); text-decoration: none; }
+  .top-link:hover { color: var(--ink); text-decoration: underline; }
+
+  /* 开场 */
+  .intro { padding-top: var(--space-7); }
+  .intro h1 {
+    margin: 0 0 var(--space-4);
+    font-size: clamp(var(--text-xl), 4.6vw, var(--text-2xl));
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  .lede {
+    margin: 0 0 var(--space-6);
+    max-width: 34em;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* 查询台 */
+  .console {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    padding: var(--space-5);
+  }
+  .ask { display: flex; gap: var(--space-2); }
+  .ask input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 var(--space-3);
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+  }
+  .ask input::placeholder { color: var(--muted); opacity: 1; }
+  .ask button {
+    height: 48px;
+    padding: 0 var(--space-5);
+    font: inherit;
+    font-weight: 700;
+    color: var(--on-accent);
+    background: var(--accent);
+    border: 0;
+    border-radius: var(--radius-control);
+    cursor: pointer;
+    transition: background-color .15s ease;
+  }
+  .ask button:hover { background: var(--accent-hover); }
+  .ask button:disabled { opacity: .65; cursor: progress; }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    margin-top: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .options label { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .options select {
+    height: 44px;
+    padding: 0 var(--space-2);
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+  }
+  .hint { margin: 0 0 0 auto; }
+
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .examples-label { font-size: var(--text-xs); color: var(--muted); }
+  .example {
+    padding: 0;
+    font: inherit;
+    color: var(--accent);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .example:hover { text-decoration-thickness: 2px; }
+
+  /* 输出区 */
+  .output { margin-top: var(--space-7); }
+  .empty { margin: 0; max-width: 34em; color: var(--muted); }
+
+  .error {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+  }
+  .error strong { display: block; font-size: var(--text-sm); }
+  .error span { font-size: var(--text-xs); color: var(--muted); }
+
+  .answer {
+    padding: var(--space-5);
+    background: var(--accent-weak);
+    border-radius: var(--radius-panel);
+  }
+  .label {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .answer-text {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-md);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .meta strong { color: var(--ink); font-weight: 700; }
+
+  .citations { margin-top: var(--space-6); }
+  .cites-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+  .cites-head h2 { margin: 0; font-size: var(--text-sm); font-weight: 700; }
+  .cites-count { font-size: var(--text-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .cite-list { margin: 0; padding: 0; list-style: none; }
+  .cite { padding: var(--space-4) 0; border-top: 1px solid var(--line); }
+  .cite-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+  }
+  .cite-num {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .cite-title { font-size: var(--text-sm); font-weight: 700; }
+  .cite-sec { font-size: var(--text-xs); color: var(--muted); }
+  .cite-text { margin: var(--space-2) 0 var(--space-3); text-wrap: pretty; }
+  .scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-bottom: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .scores b { color: var(--ink); font-weight: 700; }
+  .cite-src { font-size: var(--text-xs); }
+
+  /* 语料与评测 */
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+  }
+  .facts div { margin: 0; }
+  .facts dt { font-size: var(--text-xs); color: var(--muted); }
+  .facts dd {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-md);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .foot {
+    margin-top: var(--space-6);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .foot p { margin: 0 0 var(--space-2); }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 var(--space-4) var(--space-7); }
+    .intro { padding-top: var(--space-6); }
+    .ask { flex-direction: column; }
+    /* 竖排后 flex:1 的 basis 0 作用在高度上，会压掉 input 的 48px */
+    .ask input { flex: none; }
+    .ask button { width: 100%; }
+    .hint { margin: 0; }
+    .example {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+    .facts {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="wordmark" href="/">FinRAG</a>
+    <a class="top-link" href="https://github.com/qkf688/finrag" rel="noopener noreferrer" target="_blank">源代码</a>
+  </header>
+
+  <section class="intro">
+    <h1>每个答案都能指回原文。</h1>
+    <p class="lede">面向财经新闻语料的检索问答。混合检索给出候选，引用支撑标明出处，相关度不足时直接拒答，而不是编一个。</p>
+  </section>
+
+  <section class="console" aria-label="查询台">
+    <form class="ask" id="form" autocomplete="off">
+      <label class="sr-only" for="q">问题</label>
+      <input id="q" name="q" type="text" maxlength="200"
+             placeholder="例如：华友钴业回购计划的上限是多少？">
+      <button id="submit" type="submit">查询</button>
+    </form>
+
+    <div class="options">
+      <label for="backend">检索后端
+        <select id="backend">
+          <option value="hash">哈希基线（快）</option>
+          <option value="local">bge 模型（准）</option>
+        </select>
+      </label>
+      <label for="topk">返回条数
+        <select id="topk">
+          <option value="3">3</option>
+          <option value="5" selected>5</option>
+          <option value="8">8</option>
+          <option value="10">10</option>
+        </select>
+      </label>
+      <p class="hint">相关度低于阈值，或主体名不在语料中时拒答</p>
+    </div>
+
+    <div class="examples">
+      <span class="examples-label">试试</span>
+      <button class="example" type="button">章建平家族持仓多少亿元？</button>
+      <button class="example" type="button">华友钴业回购计划的上限是多少？</button>
+      <button class="example" type="button">高盛预测明年全球 GDP 增速是多少？</button>
+    </div>
+  </section>
+
+  <section class="output" id="output" aria-live="polite">
+    <p class="empty" id="empty">结果会给出答案、引用原文和两项检索分数。问句里的主体名不在语料中时，系统会拒答并说明原因。</p>
+
+    <p class="error" id="error" hidden>
+      <strong>请求失败</strong>
+      <span id="error-detail"></span>
+    </p>
+
+    <div id="result" hidden>
+      <div class="answer">
+        <p class="label">答案</p>
+        <p class="answer-text" id="answer-text"></p>
+        <p class="meta" id="meta"></p>
+      </div>
+
+      <div class="citations" id="citations">
+        <div class="cites-head">
+          <h2>引用原文</h2>
+          <span class="cites-count" id="cites-count"></span>
+        </div>
+        <ol class="cite-list" id="cite-list"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="语料与评测">
+    <dl class="facts">
+      <div>
+        <dt>语料</dt>
+        <dd>78 篇</dd>
+      </div>
+      <div>
+        <dt>其中真实新闻</dt>
+        <dd>36 篇</dd>
+      </div>
+      <div>
+        <dt>评测集</dt>
+        <dd>120 可答 / 10 不可答</dd>
+      </div>
+    </dl>
+  </section>
+
+  <footer class="foot">
+    <p>检索为 BM25 与向量检索的 RRF 融合，回答由抽取式逻辑生成，不调用外部生成模型。</p>
+    <p>完整指标与语料说明见仓库 README 的评测表。</p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById("form");
+  var input = document.getElementById("q");
+  var submit = document.getElementById("submit");
+  var empty = document.getElementById("empty");
+  var error = document.getElementById("error");
+  var errorDetail = document.getElementById("error-detail");
+  var result = document.getElementById("result");
+  var answerText = document.getElementById("answer-text");
+  var meta = document.getElementById("meta");
+  var citations = document.getElementById("citations");
+  var citesCount = document.getElementById("cites-count");
+  var citeList = document.getElementById("cite-list");
+
+  document.querySelectorAll(".example").forEach(function (button) {
+    button.addEventListener("click", function () {
+      input.value = button.textContent;
+      form.requestSubmit();
+    });
+  });
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var question = input.value.trim();
+    if (!question) {
+      input.focus();
+      return;
+    }
+    query(question);
+  });
+
+  function query(question) {
+    submit.disabled = true;
+    submit.textContent = "查询中";
+    form.setAttribute("aria-busy", "true");
+    error.hidden = true;
+
+    fetch("/api/query", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: question,
+        backend: document.getElementById("backend").value,
+        top_k: Number(document.getElementById("topk").value)
+      })
+    })
+      .then(function (response) {
+        return response.json().then(function (body) {
+          if (!response.ok) {
+            throw new Error(body.detail || ("HTTP " + response.status));
+          }
+          return body;
+        });
+      })
+      .then(render)
+      .catch(function (err) {
+        errorDetail.textContent = err.message;
+        error.hidden = false;
+        result.hidden = true;
+        empty.hidden = true;
+      })
+      .finally(function () {
+        submit.disabled = false;
+        submit.textContent = "查询";
+        form.removeAttribute("aria-busy");
+      });
+  }
+
+  function addMeta(text, strong) {
+    var span = document.createElement(strong ? "strong" : "span");
+    span.textContent = text;
+    meta.appendChild(span);
+  }
+
+  function render(data) {
+    empty.hidden = true;
+    error.hidden = true;
+    result.hidden = false;
+
+    answerText.textContent = data.answer || "（没有返回答案）";
+
+    meta.textContent = "";
+    addMeta(data.refused ? "已拒答" : "正常回答", true);
+    addMeta("耗时 " + data.elapsed_ms + " ms");
+    if (data.index_ms > 1) addMeta("首次建索引 " + data.index_ms + " ms");
+    if (data.refused) {
+      if (data.refuse_reason === "entity") {
+        addMeta("问句主体名未出现在引用片段中");
+      } else {
+        addMeta("最高相关度 " + data.top_score + "，低于阈值 " + data.refuse_score);
+      }
+    } else {
+      addMeta("引用 " + data.citations.length + " 条");
+    }
+
+    citeList.textContent = "";
+    citesCount.textContent = data.refused
+      ? "拒答时不给引用"
+      : "共 " + data.citations.length + " 条";
+
+    citations.hidden = data.refused || data.citations.length === 0;
+
+    data.citations.forEach(function (cite, index) {
+      var item = document.createElement("li");
+      item.className = "cite";
+
+      var head = document.createElement("div");
+      head.className = "cite-head";
+
+      var num = document.createElement("span");
+      num.className = "cite-num";
+      num.textContent = String(index + 1).padStart(2, "0");
+
+      var title = document.createElement("span");
+      title.className = "cite-title";
+      title.textContent = cite.title || cite.doc_id;
+
+      head.appendChild(num);
+      head.appendChild(title);
+
+      if (cite.section) {
+        var section = document.createElement("span");
+        section.className = "cite-sec";
+        section.textContent = cite.section;
+        head.appendChild(section);
+      }
+
+      var text = document.createElement("p");
+      text.className = "cite-text";
+      var body = (cite.text || "").replace(/^[\s，。；：、,.;:…]+/, "");
+      text.textContent = body.length > 240 ? body.slice(0, 240) + "……" : body;
+
+      var scores = document.createElement("p");
+      scores.className = "scores";
+      [["BM25 ", cite.bm25], ["向量 ", cite.vector]].forEach(function (pair) {
+        var label = document.createElement("span");
+        label.appendChild(document.createTextNode(pair[0]));
+        var value = document.createElement("b");
+        value.textContent = Number(pair[1]).toFixed(3);
+        label.appendChild(value);
+        scores.appendChild(label);
+      });
+
+      item.appendChild(head);
+      item.appendChild(text);
+      item.appendChild(scores);
+
+      if (cite.source && /^https?:/i.test(cite.source)) {
+        var link = document.createElement("a");
+        link.className = "cite-src";
+        link.href = cite.source;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "东方财富原文";
+        item.appendChild(link);
+      }
+
+      citeList.appendChild(item);
+    });
+  }
+}());
+</script>
+</body>
+</html>
