@@ -13,6 +13,12 @@ serve-setup:
 serve:
 	$(PY) -m uvicorn finrag.serve:app --port 8000
 
+bench-setup:
+	$(PY) -m pip install -e ".[bench]"
+
+financebench:
+	$(PY) -m finrag.cli financebench --download
+
 test:
 	$(PY) -m pytest
 

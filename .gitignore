@@ -9,3 +9,4 @@ index/*.jsonl
 results/
 *.egg-info/
 .DS_Store
+data/financebench_pdfs/

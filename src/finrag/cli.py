@@ -210,6 +210,42 @@ def cmd_demo(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_financebench(args: argparse.Namespace) -> int:
+    from .financebench import (
+        BenchError,
+        build_chunks,
+        download_pdfs,
+        evaluate,
+        load_questions,
+        render_report,
+    )
+
+    try:
+        questions = load_questions(args.questions)
+        if args.limit:
+            questions = questions[: args.limit]
+        docs = sorted({q["doc_name"] for q in questions})
+        if args.download:
+            failed = download_pdfs(docs, args.pdf_dir)
+            for err in failed:
+                print(f"[ERROR] 下载失败 {err}", file=sys.stderr)
+            if failed:
+                return 1
+        chunks, pages = build_chunks(args.pdf_dir, docs)
+    except BenchError as exc:
+        print(f"[ERROR] {exc}", file=sys.stderr)
+        return 1
+
+    print(f"文档 {len(docs)} 份，{pages} 页，{len(chunks)} 个 chunk；开始评测 {len(questions)} 题")
+    result = evaluate(questions, chunks, top_k=args.top_k)
+    report = render_report(result)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(report, encoding="utf-8", newline="\n")
+    print(report)
+    print(f"已写入 {args.out}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="finrag")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -241,6 +277,15 @@ def main() -> int:
     p.add_argument("--backend", choices=("hash", "local"), default="hash")
     p.add_argument("--llm", action="store_true", help="调用本地 Ollama 生成答案")
     p.set_defaults(func=cmd_demo)
+
+    p = sub.add_parser("financebench")
+    p.add_argument("--questions", type=Path, default=Path("data/financebench_open_source.jsonl"))
+    p.add_argument("--pdf-dir", type=Path, default=Path("data/financebench_pdfs"))
+    p.add_argument("--download", action="store_true", help="缺 PDF 时从 financebench 仓库下载")
+    p.add_argument("--top-k", type=int, default=5)
+    p.add_argument("--limit", type=int, default=0, help="只跑前 N 题（冒烟用）")
+    p.add_argument("--out", type=Path, default=Path("results/financebench.md"))
+    p.set_defaults(func=cmd_financebench)
 
     args = parser.parse_args()
     try:
