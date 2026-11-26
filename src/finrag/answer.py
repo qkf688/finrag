@@ -82,6 +82,21 @@ def entity_supported(question: str, cited_texts: list[str]) -> bool:
     return any(ent in text for text in cited_texts)
 
 
+REFUSAL_ANSWER = "知识库中没有相关信息"
+
+
+def llm_answer(data: dict) -> tuple[str, bool]:
+    """模型输出（parse_model_json 的结果）→ (答案正文, 是否拒答)。
+
+    模型按系统提示返回 {"answer", "citations"}：没有引用或答「没有相关信息」都算拒答，
+    否则答案无法被引用支撑，不能冒充有依据的回答。
+    """
+    text = str(data.get("answer", "")).strip()
+    if not text or text.startswith(REFUSAL_ANSWER) or not data.get("citations"):
+        return REFUSAL_ANSWER, True
+    return text, False
+
+
 def assemble_answer(
     question: str,
     ranked: list[tuple[str, float, dict[str, float]]],

@@ -25,7 +25,7 @@
 
 - **换 embedding**：`embed.py` 实现 `EmbeddingBackend` 协议即可（`encode(texts) -> vectors`）。
 - **换重排**：`retrieve.hybrid_search` 后接 cross-encoder 打分再重排。
-- **换模型服务**：`cli.call_ollama` 是唯一的 HTTP 出口，换成 DeepSeek / 智谱只改这一个函数。
+- **换模型服务**：`llm.py` 的 `chat` 是唯一的生成侧 HTTP 出口（OpenAI 兼容 `/v1/chat/completions`），换端点/模型只改环境变量。
 - **索引持久化**：`VectorIndex` 换成 FAISS / sqlite-vec，只需保持 `search()` 返回 `(doc_id, score)`。
 
 ## 已知局限（TODO）

@@ -20,8 +20,10 @@ class Settings:
     refuse_score: float = 0.15
     embedding_model: str = "BAAI/bge-small-zh-v1.5"
     embedding_dim: int = 512
-    llm_model: str = "qwen2.5:7b"
-    llm_base_url: str = "http://localhost:11434"
+    llm_model: str = "trae-cn/deepseek-v4.1-flash"
+    llm_base_url: str = "http://127.0.0.1:3425/v1"
+    llm_api_key: str = ""
+    llm_max_tokens: int = 512
 
     @staticmethod
     def from_env() -> Settings:
@@ -38,4 +40,9 @@ class Settings:
             embedding_dim=int(os.environ.get("FINRAG_EMBEDDING_DIM", base.embedding_dim)),
             llm_model=os.environ.get("FINRAG_LLM_MODEL", base.llm_model),
             llm_base_url=os.environ.get("FINRAG_LLM_BASE_URL", base.llm_base_url),
+            llm_api_key=os.environ.get(
+                "FINRAG_LLM_API_KEY",
+                os.environ.get("ANTHROPIC_AUTH_TOKEN", os.environ.get("OPENAI_API_KEY", "")),
+            ),
+            llm_max_tokens=int(os.environ.get("FINRAG_LLM_MAX_TOKENS", base.llm_max_tokens)),
         )

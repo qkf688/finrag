@@ -4,7 +4,7 @@
     python -m finrag.cli eval                  # 跑评测（只用检索，不调 LLM）
     python -m finrag.cli eval --backend local  # 用本地 embedding 模型
     python -m finrag.cli demo "问题"           # 单问检索 + 生成（默认离线模板回答）
-    python -m finrag.cli demo "问题" --llm     # 调本地 LLM（Ollama）生成答案
+    python -m finrag.cli demo "问题" --llm     # 调生成模型（默认本地 /v1 网关，可换 Ollama）
 """
 
 from __future__ import annotations
@@ -12,14 +12,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import urllib.error
-import urllib.request
 from pathlib import Path
 
-from .answer import SYSTEM_PROMPT, assemble_answer, build_prompt, extractive_answer
+from .answer import assemble_answer, build_prompt, extractive_answer, llm_answer, parse_model_json
 from .config import Settings
 from .evaluate import evaluate_qa
 from .index import IndexBuildError, build_index
+from .llm import LLMError, chat
 from .qa import load_qa
 from .retrieve import hybrid_search
 
@@ -67,28 +66,6 @@ def cmd_eval(args: argparse.Namespace) -> int:
         )
         print(f"已写入 {args.out}")
     return 0
-
-
-def call_ollama(prompt: str, settings: Settings) -> str:
-    payload = json.dumps(
-        {
-            "model": settings.llm_model,
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            "stream": False,
-            "options": {"temperature": 0.1},
-        }
-    ).encode("utf-8")
-    req = urllib.request.Request(
-        f"{settings.llm_base_url.rstrip('/')}/api/chat",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        data = json.loads(resp.read().decode("utf-8"))
-    return data.get("message", {}).get("content", "")
 
 
 def cmd_experiment(args: argparse.Namespace) -> int:
@@ -197,7 +174,28 @@ def cmd_demo(args: argparse.Namespace) -> int:
     material = [(cid, by_id[cid].text) for cid, _, _ in ranked if cid in by_id]
     prompt = build_prompt(args.question, material)
     if args.llm:
-        answer_text = call_ollama(prompt, settings)
+        try:
+            # 模型按系统提示返回 {"answer","citations"}；无引用即视为拒答。
+            # 引用 id 仍由检索排序决定，避免模型编造不存在的 chunk_id。
+            answer_text, llm_refused = llm_answer(parse_model_json(chat(prompt, settings)))
+        except LLMError as exc:
+            print(f"[ERROR] {exc}", file=sys.stderr)
+            return 1
+        if llm_refused:
+            print(
+                json.dumps(
+                    {
+                        "question": args.question,
+                        "answer": answer_text,
+                        "citations": [],
+                        "refused": True,
+                        "refuse_reason": "llm",
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
+            return 0
     else:
         answer_text = extractive_answer(args.question, material)
     out = assemble_answer(
@@ -275,7 +273,7 @@ def main() -> int:
     p = sub.add_parser("demo")
     p.add_argument("question")
     p.add_argument("--backend", choices=("hash", "local"), default="hash")
-    p.add_argument("--llm", action="store_true", help="调用本地 Ollama 生成答案")
+    p.add_argument("--llm", action="store_true", help="调用生成模型（OpenAI 兼容端点）生成答案")
     p.set_defaults(func=cmd_demo)
 
     p = sub.add_parser("financebench")

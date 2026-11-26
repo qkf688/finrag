@@ -56,7 +56,22 @@ make setup
 make test          # 跑测试
 make check-corpus  # 语料元数据体检
 make eval          # 跑评测，产出 results/eval-hash.json
-make demo          # 单问检索 + 组装答案（--llm 可调本地 Ollama）
+make demo          # 单问检索 + 组装答案（--llm 调生成模型）
+```
+
+### 接生成模型
+
+`--llm` 走 OpenAI 兼容的 `/v1/chat/completions`，默认指向本机 LLM 网关，四组环境变量覆盖：
+
+| 变量 | 默认 | 说明 |
+|---|---|---|
+| `FINRAG_LLM_BASE_URL` | `http://127.0.0.1:3425/v1` | 任意 OpenAI 兼容端点（Ollama 填 `http://localhost:11434/v1`） |
+| `FINRAG_LLM_MODEL` | `trae-cn/deepseek-v4.1-flash` | 网关上的模型 id |
+| `FINRAG_LLM_API_KEY` | 空 | 未设时回退 `ANTHROPIC_AUTH_TOKEN` / `OPENAI_API_KEY` |
+| `FINRAG_LLM_MAX_TOKENS` | `512` | 推理型模型的思考也占额度 |
+
+```bash
+python -m finrag.cli demo "华友钴业回购计划的上限是多少？" --llm
 ```
 
 ## Web 演示
