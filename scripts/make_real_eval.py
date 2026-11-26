@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import re
-from pathlib import Path
 
 from finrag.config import Settings
 from finrag.split import load_corpus, parse_front_matter
@@ -24,7 +23,9 @@ def make_question(sentence: str, title: str) -> str:
     if not m:
         return ""
     head = clean[: m.start()].strip("，。、；： ")
-    head = re.sub(r"^(今日|今日，|近日|报道称|记者从|数据显示|最新|此外|同时|其中)[，, ]*", "", head)
+    head = re.sub(
+        r"^(今日|今日，|近日|报道称|记者从|数据显示|最新|此外|同时|其中)[，, ]*", "", head
+    )
     if len(head) < 4 or len(head) > 30:
         head = title[:20]
     return f"{head}相关数字是多少？"

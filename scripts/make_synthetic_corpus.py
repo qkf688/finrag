@@ -40,9 +40,16 @@ def build_doc(idx: int, rng: random.Random, used: set[str]) -> tuple[str, dict]:
     rd = round(revenue * rd_ratio / 100, 2)
     staff = rng.randint(120, 1800)
     gross = round(rng.uniform(18, 55), 1)
-    risk = rng.choice(["下游需求波动", "原材料价格上行", "应收账款回收周期拉长", "行业竞争加剧", "汇率波动"])
-    risk2 = rng.choice(["客户集中度较高", "新品放量不及预期", "产能爬坡慢于计划", "政策变化", "技术迭代风险"])
-    product = rng.choice(["高压变频器", "储能变流器", "车载摄像头", "医用敷料", "工业机器人", "光模块", "锂电隔膜", "精密轴承"])
+    risk = rng.choice(
+        ["下游需求波动", "原材料价格上行", "应收账款回收周期拉长", "行业竞争加剧", "汇率波动"]
+    )
+    risk2 = rng.choice(
+        ["客户集中度较高", "新品放量不及预期", "产能爬坡慢于计划", "政策变化", "技术迭代风险"]
+    )
+    product = rng.choice(
+        ["高压变频器", "储能变流器", "车载摄像头", "医用敷料",
+         "工业机器人", "光模块", "锂电隔膜", "精密轴承"]
+    )
     region = rng.choice(["华东", "华南", "华北", "西南", "海外"])
     year = 2024
 

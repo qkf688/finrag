@@ -15,7 +15,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install pytest ruff
       - run: python -m pip install -e .
-      - run: python -m ruff check src tests
+      - run: python -m ruff check src tests scripts
       - run: python -m pytest -q
       - run: python -m finrag.cli check-corpus
       - run: python -m finrag.cli experiment --out results/experiments.md
