@@ -31,5 +31,8 @@ check-corpus:
 eval:
 	$(PY) -m finrag.cli eval --out results/eval-hash.json
 
+gen-quality:
+	$(PY) scripts/measure_gen_quality.py --limit 50
+
 demo:
 	$(PY) -m finrag.cli demo "基金的业绩比较基准是什么"

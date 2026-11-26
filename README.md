@@ -199,7 +199,7 @@ make serve         # http://127.0.0.1:8000
 
 结论是**生成的瓶颈在检索**：检索命中时 89% 能答，未命中时不到一半拒答；所以提升端到端表现应先投检索（宽度对齐、表格解析），而不是换更大的模型。引用零编造说明来源可追溯，但不等于答案正确。拒答判定在 `temperature 0.1` 下抖动明显（两次 25 条子集误拒率 0.520 / 0.400，50 条 0.260），单次数字只当量级参考。
 
-细节、局限与复现方法见 [`docs/gen-quality.md`](docs/gen-quality.md)。
+细节、局限与复现方法见 [`docs/gen-quality.md`](docs/gen-quality.md)（`make gen-quality`）。
 
 ## 公开基准：FinanceBench 页级检索
 

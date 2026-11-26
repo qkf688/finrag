@@ -37,4 +37,11 @@
 
 ## 复现
 
-需要本机有 OpenAI 兼容端点（`FINRAG_LLM_BASE_URL` / `FINRAG_LLM_MODEL` / `FINRAG_LLM_API_KEY`，见 README「接生成模型」）。测量脚本为一次性分析，按 `.local/runs/` 约定不入库；方法：`build_index(settings, "hash")` → 每题 `hybrid_search` 取 top-5 → `build_prompt` → `chat` → `parse_model_json` → `llm_answer`，再以 `citation_support`（引用支撑度）与 token 交集（金标覆盖）统计。
+需要本机有 OpenAI 兼容端点（`FINRAG_LLM_BASE_URL` / `FINRAG_LLM_MODEL` / `FINRAG_LLM_API_KEY`，见 README「接生成模型」）。
+
+```
+make gen-quality                                   # 默认 50 条可答 + 10 条不可答
+python scripts/measure_gen_quality.py --limit 5    # 小样本试跑
+```
+
+脚本为 `scripts/measure_gen_quality.py`：`build_index` → 每题 `hybrid_search` 取 top-5 → `build_prompt` → `chat` → `parse_model_json` → `llm_answer`，再以 `citation_support`（引用支撑度）与 token 交集（金标覆盖）统计；明细默认写 `results/gen-quality.json`（`results/` 已在 `.gitignore` 里）。
