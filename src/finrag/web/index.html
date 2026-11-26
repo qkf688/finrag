@@ -160,6 +160,11 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-control);
   }
+  .options input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+  }
   .hint { margin: 0 0 0 auto; }
 
   .examples {
@@ -348,6 +353,7 @@
           <option value="10">10</option>
         </select>
       </label>
+      <label for="llm"><input id="llm" type="checkbox"> 生成模型</label>
       <p class="hint">相关度低于阈值，或主体名不在语料中时拒答</p>
     </div>
 
@@ -452,7 +458,8 @@
       body: JSON.stringify({
         question: question,
         backend: document.getElementById("backend").value,
-        top_k: Number(document.getElementById("topk").value)
+        top_k: Number(document.getElementById("topk").value),
+        use_llm: document.getElementById("llm").checked
       })
     })
       .then(function (response) {
@@ -497,6 +504,8 @@
     if (data.refused) {
       if (data.refuse_reason === "entity") {
         addMeta("问句主体名未出现在引用片段中");
+      } else if (data.refuse_reason === "llm") {
+        addMeta("生成模型判断资料不足以回答");
       } else {
         addMeta("最高相关度 " + data.top_score + "，低于阈值 " + data.refuse_score);
       }

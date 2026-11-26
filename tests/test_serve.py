@@ -72,6 +72,40 @@ def test_top_k_limits_citations(client):
     assert len(resp.json()["citations"]) <= 1
 
 
+def test_query_with_llm_uses_generated_answer(client, monkeypatch):
+    monkeypatch.setattr(
+        "finrag.serve.chat",
+        lambda prompt, settings: (
+            '{"answer": "回购上限为 15 亿元。", "citations": ["em-002#root#1"]}'
+        ),
+    )
+    resp = client.post(
+        "/api/query",
+        json={"question": "华友钴业回购计划的上限是多少？", "use_llm": True},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["refused"] is False
+    assert data["answer"] == "回购上限为 15 亿元。"
+
+
+def test_query_with_llm_refuses_when_model_gives_no_citation(client, monkeypatch):
+    monkeypatch.setattr(
+        "finrag.serve.chat",
+        lambda prompt, settings: '{"answer": "资料不足。", "citations": []}',
+    )
+    resp = client.post(
+        "/api/query",
+        json={"question": "华友钴业回购计划的上限是多少？", "use_llm": True},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["refused"] is True
+    assert data["refuse_reason"] == "llm"
+    assert data["citations"] == []
+    assert data["answer"] == "知识库中没有相关信息"
+
+
 @pytest.mark.parametrize(
     "payload",
     [

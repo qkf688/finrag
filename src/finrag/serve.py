@@ -16,9 +16,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-from .answer import assemble_answer, extractive_answer
+from .answer import assemble_answer, build_prompt, extractive_answer, llm_answer, parse_model_json
 from .config import Settings
 from .index import IndexBuildError, build_index
+from .llm import LLMError, chat
 from .retrieve import hybrid_search
 
 WEB_DIR = Path(__file__).with_name("web")
@@ -30,6 +31,7 @@ class QueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=200)
     backend: Literal["hash", "local"] = "hash"
     top_k: int | None = Field(default=None, ge=1, le=10)
+    use_llm: bool = False
 
 
 class Citation(BaseModel):
@@ -53,7 +55,7 @@ class QueryResponse(BaseModel):
     index_ms: float
     top_score: float
     refuse_score: float
-    refuse_reason: Literal["score", "entity"] | None = None
+    refuse_reason: Literal["score", "entity", "llm"] | None = None
     citations: list[Citation]
 
 
@@ -108,6 +110,28 @@ def query(req: QueryRequest) -> QueryResponse:
     text_by_id = {c.chunk_id: c.text for c in chunks}
     material = [(cid, by_id[cid].text) for cid, _, _ in ranked if cid in by_id]
     answer_text = extractive_answer(req.question, material)
+    if req.use_llm:
+        try:
+            answer_text, llm_refused = llm_answer(
+                parse_model_json(chat(build_prompt(req.question, material), settings))
+            )
+        except LLMError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        if llm_refused:
+            t2 = time.perf_counter()
+            top = max((max(s.values()) for _, _, s in ranked), default=0.0)
+            return QueryResponse(
+                question=req.question,
+                answer=answer_text,
+                refused=True,
+                backend=req.backend,
+                elapsed_ms=round((t2 - t1) * 1000, 1),
+                index_ms=round((t1 - t0) * 1000, 1),
+                top_score=round(top, 4),
+                refuse_score=settings.refuse_score,
+                refuse_reason="llm",
+                citations=[],
+            )
     result = assemble_answer(
         req.question,
         ranked,
@@ -140,7 +164,7 @@ def query(req: QueryRequest) -> QueryResponse:
         )
 
     top_score = max((max(scores.values()) for _, _, scores in ranked), default=0.0)
-    refuse_reason: Literal["score", "entity"] | None = None
+    refuse_reason: Literal["score", "entity", "llm"] | None = None
     if result["refused"]:
         refuse_reason = "score" if top_score < settings.refuse_score else "entity"
 
