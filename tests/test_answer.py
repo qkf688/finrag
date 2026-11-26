@@ -120,3 +120,18 @@ def test_evaluate_qa_smoke():
     assert report["count"] == 1
     assert report["recall_at_k"] == 1.0
     assert report["mrr_at_k"] == 1.0
+
+
+def test_evaluate_qa_does_not_borrow_other_items_documents():
+    """别的题目标注的文档不能算命中——否则分母与检索结果同源、指标饱和。"""
+    items = [
+        {"question": "q1", "relevant_chunk_ids": ["docA#root#0"]},
+        {"question": "q2", "relevant_chunk_ids": ["docB#root#0"]},
+    ]
+    retrieved = {
+        "q1": ["docB#root#3", "docB#root#4"],
+        "q2": ["docA#root#7"],
+    }
+    report = evaluate_qa(items, lambda q: retrieved[q], k=2)
+    assert report["recall_at_k"] == 0.0
+    assert report["mrr_at_k"] == 0.0

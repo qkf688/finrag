@@ -45,27 +45,24 @@ def evaluate_qa(
     *,
     k: int = 5,
 ) -> dict:
-    """items: [{"question": str, "relevant_chunk_ids": [str, …]}]。"""
+    """items: [{"question": str, "relevant_chunk_ids": [str, …]}]。
+
+    命中要求 chunk_id 完全一致，与 ``experiment.py`` 同口径。早期版本把
+    「同 doc_id 的任意 chunk 都算命中」当作松弛，但相关文档集合是跨全部
+    题目建成的（78 篇里几乎每篇都对某题相关），松弛于是把检索结果本身
+    大量并入 relevant：分母与分子同源增长，recall 被抬到 0.9 以上而失去
+    分辨力。标注本来就是精确到 chunk 的，直接按标注算即可。
+    """
     recalls: list[float] = []
     mrrs: list[float] = []
     latencies: list[float] = []
     details: list[dict] = []
-    # 相关 chunk 标的是「哪一篇文档」，不是某个精确切分块——自动生成的 QA
-    # 只能保证答案在该文档里。因此同 doc_id 的任意 chunk 都算命中，
-    # 否则切分参数一变，评测集就失效。
-    relevant_docs: set[str] = set()
-    for item in items:
-        for cid in item.get("relevant_chunk_ids") or []:
-            relevant_docs.add(cid.split("#")[0])
 
     for item in items:
         question = item["question"]
         relevant = set(item.get("relevant_chunk_ids") or [])
         start = time.perf_counter()
         retrieved = retrieve(question)
-        # 自动生成的 QA 只标到文档级；同文档的任意 chunk 都算命中，
-        # 这样切分参数变化不会让评测集失效。
-        relevant |= {cid for cid in retrieved if cid.split("#")[0] in relevant_docs}
         latencies.append((time.perf_counter() - start) * 1000)
         r = recall_at_k(retrieved, relevant, k)
         m = mrr_at_k(retrieved, relevant, max(k, 10))

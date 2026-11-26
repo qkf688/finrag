@@ -94,7 +94,7 @@ make serve         # http://127.0.0.1:8000
 
 - `scripts/fetch_eastmoney_corpus.py`：列表页 → 36 篇正文（保留原文 URL 与抓取日期）；
 - `scripts/make_real_eval.py`：从真实正文自动构造 120 条问答，每条标注**生成该问题的那个 chunk**（`relevant_chunk_ids` 精确到 `doc#section#i`）；
-- 评测口径：本节的表格由 `experiment.py` 计算，命中要求**精确 chunk_id 一致**；`cli eval` 走的是 `evaluate.py` 的文档级松弛（同一 doc_id 的任意 chunk 都算命中），两套口径数值不可混比。拒答评测里实体门禁识别不出主体名时跳过。
+- 评测口径：本节的表格由 `experiment.py` 计算，`cli eval` 走 `evaluate.py`，两者都是**精确 chunk_id 一致**才算命中，数值可直接比较（`cli eval` 的向量候选宽度等于 `top_k`，报告路径是 10，故同一后端下 `cli eval` 略低）。拒答评测里实体门禁识别不出主体名时跳过。
 
 `python -m finrag.cli report` 实测（k=5，数值来自 `results/report-hash.md` 与 `results/report-local.md`）：
 
