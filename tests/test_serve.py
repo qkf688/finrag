@@ -48,7 +48,6 @@ def test_query_returns_answer_and_citations(client):
         "text",
         "score",
         "bm25",
-        "vector",
     } <= first.keys()
     assert data["elapsed_ms"] >= 0
 

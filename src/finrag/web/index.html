@@ -552,7 +552,7 @@
 
       var scores = document.createElement("p");
       scores.className = "scores";
-      [["BM25 ", cite.bm25], ["向量 ", cite.vector]].forEach(function (pair) {
+      [["BM25 ", cite.bm25]].forEach(function (pair) {
         var label = document.createElement("span");
         label.appendChild(document.createTextNode(pair[0]));
         var value = document.createElement("b");

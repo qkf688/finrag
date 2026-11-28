@@ -43,7 +43,6 @@ class Citation(BaseModel):
     text: str
     score: float
     bm25: float
-    vector: float
 
 
 class QueryResponse(BaseModel):
@@ -92,20 +91,16 @@ def query(req: QueryRequest) -> QueryResponse:
 
     t0 = time.perf_counter()
     try:
-        chunks, ids, texts, bm25, vec, emb = load_index(req.backend)
+        chunks, ids, texts, bm25, _vec, _emb = load_index(req.backend)
     except IndexBuildError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     t1 = time.perf_counter()
 
-    qv = emb.encode_queries([req.question])[0]
-    ranked = hybrid_search(
-        req.question,
-        texts,
-        ids,
-        bm25=bm25,
-        vec_scores=vec.search(qv, k),
-        k=k,
-    )
+    # 检索用 BM25 单路。默认 top_k 下 RRF 融合的候选集合恒等于向量候选
+    #（每条向量候选至少 1/(60+5)+1/(60+375) ≈ 0.018 > BM25 第 1 名的 1/61 ≈ 0.016），
+    # 而本仓库的向量是词袋哈希，质量低于 BM25（同语料 recall@5 0.550 vs 0.775，
+    # 见 README「为什么混合召回低于 BM25」与 2026-11-28 生成侧审计）。
+    ranked = hybrid_search(req.question, texts, ids, bm25=bm25, k=k)
     by_id = {c.chunk_id: c for c in chunks}
     text_by_id = {c.chunk_id: c.text for c in chunks}
     material = [(cid, by_id[cid].text) for cid, _, _ in ranked if cid in by_id]
@@ -159,7 +154,6 @@ def query(req: QueryRequest) -> QueryResponse:
                 text=chunk.text,
                 score=round(score, 5),
                 bm25=round(scores.get("bm25", 0.0), 4),
-                vector=round(scores.get("vector", 0.0), 4),
             )
         )
 

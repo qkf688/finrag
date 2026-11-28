@@ -72,16 +72,14 @@ def main(argv: list[str] | None = None) -> int:
     settings = Settings.from_env()
     print(f"后端 {args.backend}  模型 {settings.llm_model}  base {settings.llm_base_url}")
 
-    chunks, ids, texts, bm25, vec, emb = build_index(settings, args.backend)
+    chunks, ids, texts, bm25, _vec, _emb = build_index(settings, args.backend)
     text_by_id = {c.chunk_id: c.text for c in chunks}
     print(f"语料 {len({c.doc_id for c in chunks})} 篇 / {len(chunks)} chunk")
 
     def search(question: str):
-        qv = emb.encode_queries([question])[0]
-        return hybrid_search(
-            question, texts, ids, bm25=bm25,
-            vec_scores=vec.search(qv, settings.top_k), k=settings.top_k,
-        )
+        # 与 serve.py 同口径：BM25 单路。RRF 融合在默认宽度下候选集合恒等于向量候选
+        #（每条向量候选 ≥ 1/(60+5)+1/(60+375) > BM25 第 1 名的 1/61），见 README 变体表。
+        return hybrid_search(question, texts, ids, bm25=bm25, k=settings.top_k)
 
     answerable = spread(load_jsonl(args.questions), args.limit)
     rows: list[dict] = []
